@@ -8,7 +8,7 @@ export class PixelData {
 		if (!this.overlayColor)
 			return this.biome.color;
 		else
-			return this.biome.color.difference(this.overlayColor);
+			return this.biome.color.add(this.overlayColor);
 	}
 	public overlayColor?: Color;
 	public height: number;

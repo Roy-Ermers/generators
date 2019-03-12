@@ -8,7 +8,7 @@ export default class PolarBiome implements Biome {
 	Moisture = new Range(0, 0.5);
 	Temperature = new Range(0, 0.16);
 	Name: string = "Polar Biome";
-	Roughness = 0;
+	Roughness = 0.1;
 	color = new Color(255, 255, 255);
 
 

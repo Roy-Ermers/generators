@@ -24,7 +24,7 @@ if (canvas && ctx && dropdown) {
 	dropdown.addEventListener("change", () => {
 		Generate(Generators[parseInt((dropdown.querySelector("option:checked") as HTMLOptionElement).value)] || false, canvas);
 	});
-	button.addEventListener("click",()=>{
+	button.addEventListener("click", () => {
 		Noise.seed(Math.random())
 		Generate(Generators[parseInt((dropdown.querySelector("option:checked") as HTMLOptionElement).value)] || false, canvas);
 	})
@@ -37,11 +37,13 @@ function Generate(generator: IGenerator | false, canvas: HTMLCanvasElement) {
 	}
 	console.log("Starting generation using " + generator.name);
 	console.time("generation time");
-	for (let x = 0; x < canvas.width/2; x++)
-		for (let y = 0; y < canvas.width/2; y++) {
+	for (let x = 0; x < canvas.width / 2; x++)
+		for (let y = 0; y < canvas.width / 2; y++) {
 			let biome = (<IGenerator>generator).Generate(x, y) as PixelData;
-			ctx.fillStyle = biome.color.darken(1-(biome.height/4)).toString();
-			ctx.fillRect(x*2, y*2, 2, 2);
+			if(biome.height!=0)
+			ctx.fillStyle = biome.color.darken(1 - (biome.height / 512)).toString();
+			else ctx.fillStyle = biome.color.toString();
+			ctx.fillRect(x * 2, y * 2, 2, 2);
 		}
-		console.timeEnd("generation time");
+	console.timeEnd("generation time");
 }

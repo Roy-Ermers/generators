@@ -34,7 +34,10 @@ function Generate(generator, canvas) {
     for (let x = 0; x < canvas.width / 2; x++)
         for (let y = 0; y < canvas.width / 2; y++) {
             let biome = generator.Generate(x, y);
-            ctx.fillStyle = biome.color.darken(1 - (biome.height / 4)).toString();
+            if (biome.height != 0)
+                ctx.fillStyle = biome.color.darken(1 - (biome.height / 512)).toString();
+            else
+                ctx.fillStyle = biome.color.toString();
             ctx.fillRect(x * 2, y * 2, 2, 2);
         }
     console.timeEnd("generation time");

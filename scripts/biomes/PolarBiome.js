@@ -5,7 +5,7 @@ export default class PolarBiome {
         this.Moisture = new Range(0, 0.5);
         this.Temperature = new Range(0, 0.16);
         this.Name = "Polar Biome";
-        this.Roughness = 0;
+        this.Roughness = 0.1;
         this.color = new Color(255, 255, 255);
     }
 }

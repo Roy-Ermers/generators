@@ -2,7 +2,7 @@ import { Range } from "../Utils.js";
 import Color from "../Color.js";
 export default class GrasslandBiome {
     constructor() {
-        this.Moisture = new Range(0, 0.5);
+        this.Moisture = new Range(0, 0.16);
         this.Temperature = new Range(0.16, 0.5);
         this.Name = "Grassland";
         this.Roughness = 0.2;

@@ -20,6 +20,16 @@ select {
 	outline: none;
 	text-align: center;
 }
+select option {
+	text-align: center;
+}
+select option:hover {
+	background-color: rgba(215, 183, 0,128);
+}
+
+select option:checked {
+	background-color: #d7b700;
+}
 button {
 	position: absolute;
 	top: 1rem;
