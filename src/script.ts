@@ -25,7 +25,6 @@ if (canvas && ctx && dropdown) {
 		Generate(Generators[parseInt((dropdown.querySelector("option:checked") as HTMLOptionElement).value)] || false, canvas);
 	});
 	button.addEventListener("click", () => {
-		Noise.seed(Math.random())
 		Generate(Generators[parseInt((dropdown.querySelector("option:checked") as HTMLOptionElement).value)] || false, canvas);
 	})
 }

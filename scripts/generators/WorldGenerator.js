@@ -1,6 +1,5 @@
 import ForestBiome from "../biomes/ForestBiome.js";
 import GrasslandBiome from "../biomes/GrasslandBiome.js";
-import IceOceanBiome from "../biomes/IceOcean.js";
 import JungleBiome from "../biomes/JungleBiome.js";
 import MountainBiome from "../biomes/MountainBiome.js";
 import OceanBiome from "../biomes/OceanBiome.js";
@@ -12,12 +11,13 @@ import { PixelData } from "../Generator.js";
 import { Noise } from "../Utils.js";
 export default class WorldGenerator {
     Generate(x, y) {
+        let noise = new Noise();
         let islandSize = 50;
-        let moisture = this.LinearToExpontial(Noise.get(x / islandSize, y / islandSize));
-        let temperature = this.LinearToExpontial(Noise.get(x / islandSize * 2, y / islandSize * 2));
-        let value = Noise.get(x / islandSize * 0.75, y / islandSize * 0.75);
+        let moisture = this.LinearToExpontial(WorldGenerator.MoistureNoise.get(x / islandSize, y / islandSize));
+        let temperature = this.LinearToExpontial(WorldGenerator.TemperatureNoise.get(x / islandSize * 2, y / islandSize * 2));
+        let value = noise.get(x / islandSize * 0.75, y / islandSize * 0.75);
         let biome = this.FindBiome(moisture, temperature, value);
-        let height = Noise.get(x / islandSize * biome.Roughness, y / islandSize * biome.Roughness) * 255;
+        let height = noise.get(x / islandSize * biome.Roughness, y / islandSize * biome.Roughness) * 255;
         return new PixelData(biome, height /*,new Color(255*temperature,255*(moisture+temperature),0)*/);
     }
     /**
@@ -47,7 +47,7 @@ export default class WorldGenerator {
 //a large collection of all biomes.
 WorldGenerator.Biomes = [
     new ForestBiome(),
-    new IceOceanBiome(),
+    // new IceOceanBiome(),
     new PolarBiome(),
     new GrasslandBiome(),
     new OceanBiome(),
@@ -58,3 +58,5 @@ WorldGenerator.Biomes = [
 ];
 //use this if there is absolutely no fit.
 WorldGenerator.VoidBiome = new VoidBiome();
+WorldGenerator.MoistureNoise = new Noise();
+WorldGenerator.TemperatureNoise = new Noise();

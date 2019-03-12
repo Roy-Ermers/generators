@@ -25,10 +25,10 @@ class Vector3 {
 export class Noise {
     constructor(seed) {
         this.seed = Math.random();
-        Noise.seed(seed || 0);
+        this.Seed(seed || 0);
     }
     //#endregion
-    static seed(seed) {
+    Seed(seed) {
         if (seed > 0 && seed < 1) {
             seed *= 65536;
         }
@@ -39,16 +39,16 @@ export class Noise {
         for (var i = 0; i < 256; i++) {
             var v;
             if (i & 1) {
-                v = this.p[i] ^ (seed & 255);
+                v = Noise.p[i] ^ (seed & 255);
             }
             else {
-                v = this.p[i] ^ ((seed >> 8) & 255);
+                v = Noise.p[i] ^ ((seed >> 8) & 255);
             }
-            this.perm[i] = this.perm[i + 256] = v;
-            this.gradP[i] = this.gradP[i + 256] = this.grad3[v % 12];
+            Noise.perm[i] = Noise.perm[i + 256] = v;
+            Noise.gradP[i] = Noise.gradP[i + 256] = Noise.grad3[v % 12];
         }
     }
-    static get(x, y) {
+    get(x, y) {
         var F2 = 0.5 * (Math.sqrt(3) - 1);
         var G2 = (3 - Math.sqrt(3)) / 6;
         var n0, n1, n2;
