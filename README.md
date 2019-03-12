@@ -11,6 +11,6 @@ A working version is running at: https://roy-ermers.github.io/generators/
 * [ ] Structures
 * [ ] Heights
 * [ ] Trees
-* [ ] Optimalisation
-* [ ] there is a oppertunity in a predefined table for all biomes instead of picking candidates
+* [ ] Optimization
+* [ ] there is a opportunity in a predefined table for all biomes instead of picking candidates
 * [ ] Colors
