@@ -9,8 +9,9 @@ A working version is running at: https://roy-ermers.github.io/generators/
 * [ ] Extra biomes
 * [ ] Add a extra property to biomes with a minimal distance to the sea
 * [ ] Structures
-* [ ] Heights
+* [ ] Heights (Kinda done)
 * [ ] Trees
 * [ ] Optimization
 * [ ] there is a opportunity in a predefined table for all biomes instead of picking candidates
 * [ ] Colors
+* [ ] Extra data visible in test application
