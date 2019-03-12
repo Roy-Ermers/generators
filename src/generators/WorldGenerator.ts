@@ -19,7 +19,7 @@ export default class WorldGenerator implements IGenerator {
 
 		let biome = this.FindBiome(moisture, temperature, value);
 		let height = Noise.get(x / 50 * biome.Roughness, y / 50 * biome.Roughness);
-		return new PixelData(biome, height,new Color(255*temperature,255*moisture,0));
+		return new PixelData(biome, height/*,new Color(255*temperature,255*moisture,0)*/);
 	}
 
 	FindBiome(moisture: number, temperature: number, value: number) {

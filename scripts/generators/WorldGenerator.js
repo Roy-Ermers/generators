@@ -3,7 +3,6 @@ import { PixelData } from "../Generator.js";
 import { Noise } from "../Utils.js";
 import GrasslandBiome from "../biomes/GrasslandBiome.js";
 import OceanBiome from "../biomes/OceanBiome.js";
-import Color from "../Color.js";
 export default class WorldGenerator {
     Generate(x, y) {
         let moisture = Noise.get(x / 25, y / 25);
@@ -11,7 +10,7 @@ export default class WorldGenerator {
         let value = Noise.get(x, y);
         let biome = this.FindBiome(moisture, temperature, value);
         let height = Noise.get(x / 50 * biome.Roughness, y / 50 * biome.Roughness);
-        return new PixelData(biome, height, new Color(255 * temperature, 255 * moisture, 0));
+        return new PixelData(biome, height /*,new Color(255*temperature,255*moisture,0)*/);
     }
     FindBiome(moisture, temperature, value) {
         let candidates = [];
