@@ -1,14 +1,14 @@
 import { Range } from "../Utils.js";
 import Color from "../Color.js";
-export default class IceOceanBiome {
+export default class VulcanBiome {
     constructor() {
         this.Moisture = new Range(0, 1);
-        this.Temperature = new Range(0, 0.5);
+        this.Temperature = new Range(0.7, 1);
         this.Roughness = 0;
         this.Rarity = 0.1;
-        this.color = new Color(50, 75, 85);
+        this.color = new Color(207, 16, 32);
     }
     get Name() {
-        return "IceOcean";
+        return "Vulcano";
     }
 }

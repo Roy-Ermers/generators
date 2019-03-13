@@ -6,6 +6,7 @@ export default class IceOceanBiome implements Biome {
 	Moisture = new Range(0, 1);
 	Temperature = new Range(0, 0.5);
 	Roughness = 0;
+	Rarity = 0.1;
 	get Name() {
 		return "IceOcean";
 	}

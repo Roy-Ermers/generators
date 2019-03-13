@@ -6,6 +6,7 @@ export default class SandDesertBiome implements Biome {
 	Moisture = new Range(0, 0.2);
 	Temperature = new Range(0.75, 1);
 	Roughness = 0.4;
+	Rarity = 0.5;
 	get Name() {
 		return "Sand Desert";
 	}

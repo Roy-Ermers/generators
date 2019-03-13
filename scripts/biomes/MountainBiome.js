@@ -5,6 +5,7 @@ export default class MountainBiome {
         this.Moisture = new Range(0, .5);
         this.Temperature = new Range(0.5, 1);
         this.Roughness = 1;
+        this.Rarity = 0.4;
         this.color = new Color(36, 40, 41);
     }
     get Name() {

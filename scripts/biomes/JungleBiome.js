@@ -5,6 +5,7 @@ export default class JungleBiome {
         this.Moisture = new Range(0.75, 1);
         this.Temperature = new Range(0.75, 1);
         this.Roughness = 0.5;
+        this.Rarity = .6;
         this.color = new Color(59, 122, 87);
     }
     get Name() {

@@ -1,14 +1,13 @@
-"use strict";
-class Color {
-    constructor(r, g, b) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-    }
-    toString(type) {
-        if (!type || type == "rgb")
-            return `rgb(${this.r}, ${this.g}, ${this.b})`;
+export default class PixelData {
+    get color() {
+        if (!this.overlayColor)
+            return this.biome.color;
         else
-            "#" + this.r.toString(16) + this.g.toString(16) + this.b.toString(16);
+            return this.overlayColor;
+    }
+    constructor(biome, height, overlay) {
+        this.biome = biome;
+        this.height = height;
+        this.overlayColor = overlay;
     }
 }

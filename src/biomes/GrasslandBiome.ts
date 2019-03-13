@@ -9,6 +9,7 @@ export default class GrasslandBiome implements Biome {
 	Temperature = new Range(0.16, 0.5);
 	Name: string = "Grassland";
 	Roughness = 0.2;
+	Rarity = 0.8;
 	color = new Color(25, 232, 25);
 
 

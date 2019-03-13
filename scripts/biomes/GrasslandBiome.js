@@ -6,6 +6,7 @@ export default class GrasslandBiome {
         this.Temperature = new Range(0.16, 0.5);
         this.Name = "Grassland";
         this.Roughness = 0.2;
+        this.Rarity = 0.8;
         this.color = new Color(25, 232, 25);
     }
 }
