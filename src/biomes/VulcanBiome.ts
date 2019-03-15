@@ -8,7 +8,7 @@ export default class VulcanBiome implements Biome {
 	Roughness = 0.01;
 	Rarity = 0.0001;
 	get Name() {
-		return "Vulcano";
+		return "Vulcan";
 	}
 
 	color = new Color(207, 16, 32);

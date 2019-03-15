@@ -9,6 +9,6 @@ export default class VulcanBiome {
         this.color = new Color(207, 16, 32);
     }
     get Name() {
-        return "Vulcano";
+        return "Vulcan";
     }
 }
