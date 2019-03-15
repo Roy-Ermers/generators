@@ -14,6 +14,9 @@ export default class Color {
 		result.b = this.b + amplifier * (a.b - this.r);
 		return result;
 	}
+	invert() {
+		return new Color(255 - this.r, 255 - this.g, 255 - this.b)
+	}
 	add(a: Color, amplifier: number = 1) {
 		let result = new Color(0, 0, 0);
 		result.r = this.r + (a.r * amplifier);
@@ -21,8 +24,8 @@ export default class Color {
 		result.b = this.b + (a.b * amplifier);
 		return result;
 	}
-	difference(a:Color) {
-		return new Color(Math.abs(this.r - a.r),Math.abs(this.g - a.g),Math.abs(this.b - a.b));
+	difference(a: Color) {
+		return new Color(Math.abs(this.r - a.r), Math.abs(this.g - a.g), Math.abs(this.b - a.b));
 	}
 	darken(amplifier: number) {
 		return new Color(this.r * amplifier, this.g * amplifier, this.b * amplifier);

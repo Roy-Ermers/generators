@@ -5,7 +5,8 @@ export default class VoidBiome {
         this.Moisture = new Range(0, 0);
         this.Temperature = new Range(0, 0);
         this.Roughness = 0;
-        this.color = new Color(20, 0, 20);
+        this.Rarity = 0;
+        this.color = new Color(255, 0, 255);
     }
     get Name() {
         return "Void";

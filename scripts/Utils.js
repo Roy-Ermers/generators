@@ -6,6 +6,9 @@ export class Range {
     Check(number) {
         return this.min <= number && this.max >= number;
     }
+    toString() {
+        return `(${this.min}> . <${this.max})`;
+    }
 }
 class Vector3 {
     constructor(x, y, z) {
@@ -36,8 +39,8 @@ export class Noise {
         if (seed < 256) {
             seed |= seed << 8;
         }
-        for (var i = 0; i < 256; i++) {
-            var v;
+        for (let i = 0; i < 256; i++) {
+            let v;
             if (i & 1) {
                 v = Noise.p[i] ^ (seed & 255);
             }
@@ -49,16 +52,16 @@ export class Noise {
         }
     }
     get(x, y) {
-        var F2 = 0.5 * (Math.sqrt(3) - 1);
-        var G2 = (3 - Math.sqrt(3)) / 6;
-        var n0, n1, n2;
-        var s = (x + y) * F2;
-        var i = Math.floor(x + s);
-        var j = Math.floor(y + s);
-        var t = (i + j) * G2;
-        var x0 = x - i + t;
-        var y0 = y - j + t;
-        var i1, j1;
+        let F2 = 0.5 * (Math.sqrt(3) - 1);
+        let G2 = (3 - Math.sqrt(3)) / 6;
+        let n0, n1, n2;
+        let s = (x + y) * F2;
+        let i = Math.floor(x + s);
+        let j = Math.floor(y + s);
+        let t = (i + j) * G2;
+        let x0 = x - i + t;
+        let y0 = y - j + t;
+        let i1, j1;
         if (x0 > y0) {
             i1 = 1;
             j1 = 0;
@@ -67,16 +70,16 @@ export class Noise {
             i1 = 0;
             j1 = 1;
         }
-        var x1 = x0 - i1 + G2;
-        var y1 = y0 - j1 + G2;
-        var x2 = x0 - 1 + 2 * G2;
-        var y2 = y0 - 1 + 2 * G2;
+        let x1 = x0 - i1 + G2;
+        let y1 = y0 - j1 + G2;
+        let x2 = x0 - 1 + 2 * G2;
+        let y2 = y0 - 1 + 2 * G2;
         i &= 255;
         j &= 255;
-        var gi0 = Noise.gradP[i + Noise.perm[j]];
-        var gi1 = Noise.gradP[i + i1 + Noise.perm[j + j1]];
-        var gi2 = Noise.gradP[i + 1 + Noise.perm[j + 1]];
-        var t0 = 0.5 - x0 * x0 - y0 * y0;
+        let gi0 = Noise.gradP[i + Noise.perm[j]];
+        let gi1 = Noise.gradP[i + i1 + Noise.perm[j + j1]];
+        let gi2 = Noise.gradP[i + 1 + Noise.perm[j + 1]];
+        let t0 = 0.5 - x0 * x0 - y0 * y0;
         if (t0 < 0) {
             n0 = 0;
         }
@@ -84,7 +87,7 @@ export class Noise {
             t0 *= t0;
             n0 = t0 * t0 * gi0.dot2(x0, y0);
         }
-        var t1 = 0.5 - x1 * x1 - y1 * y1;
+        let t1 = 0.5 - x1 * x1 - y1 * y1;
         if (t1 < 0) {
             n1 = 0;
         }
@@ -92,7 +95,7 @@ export class Noise {
             t1 *= t1;
             n1 = t1 * t1 * gi1.dot2(x1, y1);
         }
-        var t2 = 0.5 - x2 * x2 - y2 * y2;
+        let t2 = 0.5 - x2 * x2 - y2 * y2;
         if (t2 < 0) {
             n2 = 0;
         }

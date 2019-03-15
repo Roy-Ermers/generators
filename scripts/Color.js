@@ -11,6 +11,9 @@ export default class Color {
         result.b = this.b + amplifier * (a.b - this.r);
         return result;
     }
+    invert() {
+        return new Color(255 - this.r, 255 - this.g, 255 - this.b);
+    }
     add(a, amplifier = 1) {
         let result = new Color(0, 0, 0);
         result.r = this.r + (a.r * amplifier);
