@@ -15,6 +15,7 @@ import { Noise } from "../Utils.js";
 import Color from "../Color.js";
 import VulcanBiome from "../biomes/VulcanBiome.js";
 import BeachBiome from "../biomes/BeachBiome.js";
+import TundraBiome from "../biomes/TundraBiome.js";
 
 export default class WorldGenerator implements IGenerator {
 	//a large collection of all biomes.
@@ -29,6 +30,7 @@ export default class WorldGenerator implements IGenerator {
 		new JungleBiome(),
 		new MountainBiome(),
 		// new VulcanBiome(),
+		new TundraBiome(),
 		new BeachBiome()
 	]
 
@@ -49,7 +51,7 @@ export default class WorldGenerator implements IGenerator {
 
 		let biome = this.FindBiome(moisture, temperature, WorldGenerator.noise.get(x / islandSize / 200, y / islandSize / 200));
 		let height
-			= WorldGenerator.noise.get(x / islandSize * biome.Roughness, y / islandSize * biome.Roughness) * 255;
+		// = WorldGenerator.noise.get(x / islandSize * biome.Roughness, y / islandSize * biome.Roughness) * 255;
 		return new PixelData(biome, height || 0, moisture, temperature
 			// , new Color(255 * temperature, 255 * WorldGenerator.noise.get(x / islandSize / 25, y / islandSize / 25), 255 * moisture)
 		);

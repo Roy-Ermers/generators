@@ -24,7 +24,7 @@ if (canvas && ctx && dropdown) {
             let y = (e.clientY - canvas.getBoundingClientRect().top) / PixelSize;
             let pixel = generator.Generate(x / PixelSize, y / PixelSize);
             //@ts-ignore
-            document.querySelector(".info").innerHTML = pixel.toString() + `<br>X: ${x / PixelSize}<br>Y: ${y / PixelSize}<br>Candidates: ${PickCandidates(pixel.moisture, pixel.temperature).map(x => x.Name).join(", ") || "(none)"}`;
+            document.querySelector(".info").innerHTML = pixel.toString() + `<br>X: ${x / PixelSize}<br>Y: ${y / PixelSize}<br>Candidates: ${PickCandidates(pixel.moisture, pixel.temperature).map(x => `${x.Name} (${x.Rarity * 100}%)`).join(", ") || "(none)"}`;
         }
     });
     dropdown.addEventListener("change", () => {
@@ -54,19 +54,21 @@ function Generate(generator, canvas) {
     console.timeEnd("generation time");
 }
 let x = 0;
-let offset = canvas.width / PixelSize;
+let offsetX = canvas.width / PixelSize;
+let offsetY = canvas.width / PixelSize;
 function Scroll() {
     let generator = Generators[parseInt(dropdown.querySelector("option:checked").value)];
-    ctx.putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), PixelSize, 0);
+    ctx.putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), PixelSize, PixelSize);
     for (let y = 0; y < canvas.width / PixelSize; y++) {
-        let biome = generator.Generate((canvas.width + offset) / PixelSize, y / PixelSize);
+        let biome = generator.Generate((canvas.width + offsetX) / PixelSize, (y / PixelSize) + offsetY);
         if (biome.height != 0)
             ctx.fillStyle = biome.color.darken(1 - (biome.height / 512)).toString();
         else
             ctx.fillStyle = biome.color.toString();
         ctx.fillRect(0, y * PixelSize, PixelSize, PixelSize);
     }
-    offset++;
+    offsetX++;
+    offsetY++;
     requestAnimationFrame(Scroll);
 }
 //@ts-ignore

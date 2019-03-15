@@ -11,6 +11,7 @@ import VoidBiome from "../biomes/VoidBiome.js";
 import PixelData from "../PixelData.js";
 import { Noise } from "../Utils.js";
 import BeachBiome from "../biomes/BeachBiome.js";
+import TundraBiome from "../biomes/TundraBiome.js";
 export default class WorldGenerator {
     constructor() {
         //@ts-ignore
@@ -21,7 +22,8 @@ export default class WorldGenerator {
         let moisture = (WorldGenerator.MoistureNoise.get(x / islandSize / 10, y / islandSize / 10));
         let temperature = (WorldGenerator.TemperatureNoise.get(x / islandSize / 20, y / islandSize / 20));
         let biome = this.FindBiome(moisture, temperature, WorldGenerator.noise.get(x / islandSize / 200, y / islandSize / 200));
-        let height = WorldGenerator.noise.get(x / islandSize * biome.Roughness, y / islandSize * biome.Roughness) * 255;
+        let height;
+        // = WorldGenerator.noise.get(x / islandSize * biome.Roughness, y / islandSize * biome.Roughness) * 255;
         return new PixelData(biome, height || 0, moisture, temperature
         // , new Color(255 * temperature, 255 * WorldGenerator.noise.get(x / islandSize / 25, y / islandSize / 25), 255 * moisture)
         );
@@ -73,6 +75,7 @@ WorldGenerator.Biomes = [
     new JungleBiome(),
     new MountainBiome(),
     // new VulcanBiome(),
+    new TundraBiome(),
     new BeachBiome()
 ];
 //use this if there is absolutely no fit.
