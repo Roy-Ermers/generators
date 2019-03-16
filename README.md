@@ -14,3 +14,4 @@ A working version is running at: https://roy-ermers.github.io/generators/
 * [ ] there is a opportunity in a predefined table for all biomes instead of picking candidates
 * [ ] Colors
 * [ ] Extra data visible in test application
+* [ ] Use poisson discs to place trees.

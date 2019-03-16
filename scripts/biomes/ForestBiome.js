@@ -6,9 +6,7 @@ export default class ForestBiome {
         this.Temperature = new Range(0.2, 0.7);
         this.Roughness = 0.3;
         this.Rarity = 0.9;
+        this.Name = "Forest";
         this.color = new Color(34, 139, 34);
-    }
-    get Name() {
-        return "Forest";
     }
 }

@@ -11,7 +11,7 @@ export default class RockDesertBiome implements Biome {
 		return "Rock Desert";
 	}
 
-	color = new Color(136, 140, 141);
+	color = new Color(156, 160, 161);
 
 
 }

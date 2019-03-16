@@ -1,21 +1,20 @@
 import Biome from "../Biome.js";
+import BeachBiome from "../biomes/BeachBiome.js";
 import ForestBiome from "../biomes/ForestBiome.js";
 import GrasslandBiome from "../biomes/GrasslandBiome.js";
 import IceOceanBiome from "../biomes/IceOcean.js";
 import JungleBiome from "../biomes/JungleBiome.js";
 import MountainBiome from "../biomes/MountainBiome.js";
 import OceanBiome from "../biomes/OceanBiome.js";
-import SnowBiome from "../biomes/PolarBiome.js";
 import RockDesertBiome from "../biomes/RockDesertBiome.js";
 import SandDesertBiome from "../biomes/SandDesertBiome.js";
+import SnowBiome from "../biomes/SnowBiome.js";
+import TundraBiome from "../biomes/TundraBiome.js";
 import VoidBiome from "../biomes/VoidBiome.js";
 import IGenerator from "../Generator.js";
 import PixelData from "../PixelData.js";
 import { Noise } from "../Utils.js";
 import Color from "../Color.js";
-import VulcanBiome from "../biomes/VulcanBiome.js";
-import BeachBiome from "../biomes/BeachBiome.js";
-import TundraBiome from "../biomes/TundraBiome.js";
 
 export default class WorldGenerator implements IGenerator {
 	//a large collection of all biomes.
@@ -35,25 +34,36 @@ export default class WorldGenerator implements IGenerator {
 	]
 
 	//use this if there is absolutely no fit.
-	static VoidBiome: Biome = new VoidBiome();
+	static VoidBiome: Biome = new OceanBiome();
 
+
+	//use multiple noisemaps
 	static MoistureNoise = new Noise();
 	static TemperatureNoise = new Noise();
 	static noise = new Noise();
+
 	constructor() {
 		//@ts-ignore
 		window.PickCandidates = this.PickCandidates;
 	}
 	Generate(x: number, y: number): PixelData {
 		let islandSize = 1;
-		let moisture = (WorldGenerator.MoistureNoise.get(x / islandSize / 10, y / islandSize / 10));
-		let temperature = (WorldGenerator.TemperatureNoise.get(x / islandSize / 20, y / islandSize / 20));
 
-		let biome = this.FindBiome(moisture, temperature, WorldGenerator.noise.get(x / islandSize / 200, y / islandSize / 200));
+		x = x / islandSize;
+		y = y / islandSize;
+		let moisture = (WorldGenerator.MoistureNoise.get(x / 10, y / 10) + 0.2 * WorldGenerator.MoistureNoise.get(x / 100, y / 100)) / 1.2;
+		let temperature = (WorldGenerator.TemperatureNoise.get(x / 20, y / 20));
+		let value = WorldGenerator.noise.get(x / 500, y / 500);
+
+		let biome = this.FindBiome(moisture, temperature, value);
 		let height
-		// = WorldGenerator.noise.get(x / islandSize * biome.Roughness, y / islandSize * biome.Roughness) * 255;
-		return new PixelData(biome, height || 0, moisture, temperature
-			// , new Color(255 * temperature, 255 * WorldGenerator.noise.get(x / islandSize / 25, y / islandSize / 25), 255 * moisture)
+			= 64 + WorldGenerator.noise.get(x * biome.Roughness, y * biome.Roughness) * 192;
+		if (height < 64) {
+			biome = this.FindBiome(1, temperature, value);
+			height = value * 128;
+		}
+		return new PixelData(biome, height, moisture, temperature
+			// , new Color(255 * temperature, 255 * value, 255 * moisture)
 		);
 	}
 	Refresh() {
@@ -69,7 +79,7 @@ export default class WorldGenerator implements IGenerator {
 	 */
 	FindBiome(moisture: number, temperature: number, value: number) {
 		let candidates: Biome[] = this.PickCandidates(moisture, temperature);
-		let biome = candidates[candidates.length * value | 0];
+		let biome = candidates[(candidates.length - 1) * value | 0];
 		return biome || WorldGenerator.VoidBiome;
 	}
 	private PickCandidates(moisture: number, temperature: number) {

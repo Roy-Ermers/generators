@@ -47,12 +47,16 @@ button {
 
 .info {
 	position: fixed;
-	left: 0;
+	left: 1rem;
 	bottom: 0;
 	z-index: 1;
 	font-family: 'Courier New', Courier, monospace;
 	color: #FFF;
 	white-space: nowrap;
-	text-shadow: 0 0 5px black;
+	text-shadow:
+	-1px -1px 0 #000,  
+	 1px -1px 0 #000,
+	 -1px 1px 0 #000,
+	  1px 1px 0 #000;
 	pointer-events: none;
 }

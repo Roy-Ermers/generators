@@ -5,7 +5,7 @@ import Color from "../Color.js";
 
 export default class SnowBiome implements Biome {
 
-	Moisture = new Range(0, 1);
+	Moisture = new Range(0, .5);
 	Temperature = new Range(0, 0.25);
 	Name: string = "Snow";
 	Roughness = 0.1;

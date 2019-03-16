@@ -1,14 +1,14 @@
 import IGenerator from "./Generator.js";
 import PixelData from "./PixelData.js";
 import WorldGenerator from "./generators/WorldGenerator.js";
-
 let dropdown: HTMLSelectElement = document.querySelector("select") as HTMLSelectElement;
 let canvas = document.querySelector("canvas") as HTMLCanvasElement;
 let button = document.querySelector("button") as HTMLButtonElement;
 let ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+
 const Generators: IGenerator[] = [new WorldGenerator()];
-
-
+const PreformanceTesting = true;
 const PixelSize = 4;
 
 
@@ -50,6 +50,16 @@ function Generate(generator: IGenerator | false, canvas: HTMLCanvasElement) {
 		return;
 	}
 	generator.Refresh();
+	if (PreformanceTesting) {
+		let timing = performance.now();
+		(<IGenerator>generator).Generate(0,0);
+
+		let endtime = performance.now();
+		if (endtime - timing < 25)
+			console.log("One pixel speed test: " + (endtime - timing) + "ms");
+		else
+			console.warn("One pixel speed test took too long (" + (endtime - timing) + "ms). Please optimize your code.");
+	}
 	console.log("Starting generation using " + generator.name);
 	console.time("generation time");
 	for (let x = 0; x < canvas.width / PixelSize; x++)

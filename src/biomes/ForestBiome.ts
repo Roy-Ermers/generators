@@ -8,9 +8,6 @@ export default class ForestBiome implements Biome {
 
 	Roughness = 0.3;
 	Rarity = 0.9;
-	get Name() {
-		return "Forest";
-	}
-
+	Name = "Forest";
 	color = new Color(34, 139, 34);
 }
