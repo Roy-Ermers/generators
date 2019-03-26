@@ -46,7 +46,7 @@ function Generate(generator, canvas) {
         generator.Generate(0, 0);
         let endtime = performance.now();
         if (endtime - timing < 25)
-            console.log("One pixel speed test: " + (endtime - timing) + "ms");
+            console.log("One pixel speed test: " + (endtime - timing) + ". amount of pixels in 1 second: " + 1000 / (endtime - timing));
         else
             console.warn("One pixel speed test took too long (" + (endtime - timing) + "ms). Please optimize your code.");
     }
