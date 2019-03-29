@@ -6,7 +6,7 @@ export default class BeachBiome {
         this.Temperature = new Range(0.4, 1);
         this.Name = "Beach";
         this.Roughness = 0;
-        this.Rarity = 0.2;
+        this.Rarity = 0.4;
         this.color = new Color(255, 238, 173);
     }
 }
