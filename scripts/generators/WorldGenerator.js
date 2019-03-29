@@ -23,8 +23,9 @@ export default class WorldGenerator {
         x = x / islandSize;
         y = y / islandSize;
         let biome;
-        let moisture = .8 * Maps.MoistureNoise.get(x / 10, y / 10)
-            + .2 * Maps.MoistureNoise.get(x / 100, y / 100);
+        let moisture = .6 * Maps.MoistureMap.get(x / 17.5, y / 17.5)
+            + .3 * Maps.MoistureMap2.get(x / 15, y / 15)
+            + .1 * Maps.MoistureMap3.get(x / 10, y / 10);
         let temperature = (Maps.TemperatureMap.get(x / 20, y / 20) * .7
             + Maps.TemperatureMap2.get(x / 4, y / 4) * .3);
         let value = Maps.HeightMap.get(x / 500, y / 500);
@@ -34,14 +35,18 @@ export default class WorldGenerator {
             + Maps.OceanMap3.get(x / seaLevel * 15, y / seaLevel * 15) * .1;
         if (Ocean < seaLevel / 256) {
             biome = WorldGenerator.SeaBiomes[Math.floor(WorldGenerator.SeaBiomes.length * 1 - LinearToExpontial(temperature * 0.8 + Maps.TemperatureMap3.get(x * .1, y * .1) * .2))];
-            height *= (Maps.HeightMap.get(x * biome.Roughness, y * biome.Roughness)) * seaLevel;
+            moisture = 1;
+            if (biome.Roughness > 0)
+                height *= (Maps.HeightMap.get(x * biome.Roughness, y * biome.Roughness)) * seaLevel;
+            else
+                height = seaLevel;
         }
         else {
             biome = this.FindBiome(moisture, temperature, value);
             height *= Maps.HeightMap.get(x * biome.Roughness, y * biome.Roughness) * 204.8;
         }
         return new PixelData(biome, height, moisture, temperature
-        // , new Color(255 * temperature,0,0)
+        // , new Color(255 * moisture,0,0)
         );
     }
     Refresh() {
@@ -92,7 +97,9 @@ WorldGenerator.SeaBiomes = [
 WorldGenerator.VoidBiome = new VoidBiome();
 // use multiple noisemaps
 WorldGenerator.Maps = {
-    MoistureNoise: new Noise(),
+    MoistureMap: new Noise(),
+    MoistureMap2: new Noise(),
+    MoistureMap3: new Noise(),
     TemperatureMap: new Noise(),
     TemperatureMap2: new Noise(),
     TemperatureMap3: new Noise(),

@@ -27,7 +27,7 @@ export default class WorldGenerator implements IGenerator {
 		new MountainBiome(),
 		// new VulcanBiome(),
 		new TundraBiome()
-		];
+	];
 
 	static SeaBiomes = [
 		new IceOceanBiome(),
@@ -39,7 +39,9 @@ export default class WorldGenerator implements IGenerator {
 
 	// use multiple noisemaps
 	static Maps: { [key: string]: Noise } = {
-		MoistureNoise: new Noise(),
+		MoistureMap: new Noise(),
+		MoistureMap2: new Noise(),
+		MoistureMap3: new Noise(),
 		TemperatureMap: new Noise(),
 		TemperatureMap2: new Noise(),
 		TemperatureMap3: new Noise(),
@@ -60,8 +62,9 @@ export default class WorldGenerator implements IGenerator {
 		y = y / islandSize;
 		let biome: Biome;
 
-		let moisture = .8 * Maps.MoistureNoise.get(x / 10, y / 10)
-			+ .2 * Maps.MoistureNoise.get(x / 100, y / 100);
+		let moisture = .6 * Maps.MoistureMap.get(x / 17.5, y / 17.5)
+			+ .3 * Maps.MoistureMap2.get(x / 15, y / 15)
+			+ .1 * Maps.MoistureMap3.get(x / 10, y / 10);
 
 		let temperature = (Maps.TemperatureMap.get(x / 20, y / 20) * .7
 			+ Maps.TemperatureMap2.get(x / 4, y / 4) * .3);
@@ -76,14 +79,17 @@ export default class WorldGenerator implements IGenerator {
 
 		if (Ocean < seaLevel / 256) {
 			biome = WorldGenerator.SeaBiomes[Math.floor(WorldGenerator.SeaBiomes.length * 1 - LinearToExpontial(temperature * 0.8 + Maps.TemperatureMap3.get(x * .1, y * .1) * .2))];
-			height *= (Maps.HeightMap.get(x * biome.Roughness, y * biome.Roughness)) * seaLevel;
+			moisture = 1;
+			if (biome.Roughness > 0)
+				height *= (Maps.HeightMap.get(x * biome.Roughness, y * biome.Roughness)) * seaLevel;
+			else height = seaLevel;
 		} else {
 			biome = this.FindBiome(moisture, temperature, value);
 			height *= Maps.HeightMap.get(x * biome.Roughness, y * biome.Roughness) * 204.8;
 
 		}
 		return new PixelData(biome, height, moisture, temperature
-			// , new Color(255 * temperature,0,0)
+			// , new Color(255 * moisture,0,0)
 		);
 	}
 	Refresh(): void {
