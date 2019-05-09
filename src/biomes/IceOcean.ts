@@ -11,7 +11,7 @@ export default class IceOceanBiome implements Biome {
 		return "Ice ocean";
 	}
 
-	color = new Color(150, 175, 185,.5);
+	color = new Color(150, 175, 185, .8);
 
 
 }

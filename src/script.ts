@@ -10,7 +10,7 @@ let ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
 const Generators: IGenerator[] = [new WorldGenerator()];
 const PreformanceTesting = true;
-const PixelSize = 8;
+const PixelSize = 4;
 
 Generators.forEach(generator => {
 	let elem = document.createElement("option");
@@ -52,6 +52,9 @@ function Generate(generator: IGenerator | false, canvas: HTMLCanvasElement) {
 		return;
 	}
 	generator.Refresh();
+	console.log("%cStarting generation using " + generator.name,"font-size: 18px; background-color: blue; color: lightblue; font-weight: bold;");
+	let time = 0;
+	let estimatedTime = 0;
 	if (PreformanceTesting) {
 		let timing = performance.now();
 		(<IGenerator>generator).Generate(0, 0);
@@ -60,15 +63,19 @@ function Generate(generator: IGenerator | false, canvas: HTMLCanvasElement) {
 		if (endtime - timing < 25) {
 			console.group("Preformance");
 			console.log("One pixel speed test: " + (endtime - timing) + "ms");
-			console.log("mount of pixels in 1 second: " + 1000 / (endtime - timing) + "ms");
-			console.log("Estimated renderingtime: " + (canvas.width / PixelSize) ** 2 + "ms (" + Math.ceil((canvas.width / PixelSize) ** 2 / 1000) + "s)");
+			console.log("amount of pixels in 1 second: " + 1000 / (endtime - timing) + "px");
+			console.log("Estimated generation time: " + Math.pow(canvas.width / PixelSize, 2) * (endtime - timing) + "ms (" + Math.ceil((canvas.width / PixelSize * canvas.width / PixelSize) * (endtime - timing) / 1000) + "s)");
 			console.groupEnd();
+
+			estimatedTime = Math.pow(canvas.width / PixelSize, 2) * (endtime - timing);
 		}
-		else
+		else {
 			console.warn("One pixel speed test took too long (" + (endtime - timing) + "ms). Please optimize your code.");
+			return;
+		}
+
+		time = performance.now();
 	}
-	console.log("Starting generation using " + generator.name);
-	console.time("generation time");
 	if (generator.Dimension == "2D")
 		for (let x = 0; x < canvas.width / PixelSize; x++) {
 			for (let y = 0; y < canvas.width / PixelSize; y++) {
@@ -86,13 +93,19 @@ function Generate(generator: IGenerator | false, canvas: HTMLCanvasElement) {
 				let X = z % 2 == 0 ? x * (PixelSize * 2) : x * (PixelSize * 2) + PixelSize;
 				let Y = z % 2 == 0 ? z * PixelSize : z * PixelSize;// % 2 == 0 ? z * (PixelSize * 1.5) : z * PixelSize;
 				if (biome.moisture < 1)
-					drawCube(X, Y, PixelSize, PixelSize, biome.height*PixelSize || PixelSize, biome.color,false);
+					drawCube(X, Y, PixelSize, PixelSize, biome.height * PixelSize || PixelSize, biome.color, false);
 				else
 					drawCube(X, Y, PixelSize, PixelSize, PixelSize, biome.color, false, false);
 
 			}
 		}
-	console.timeEnd("generation time");
+	if (PreformanceTesting) {
+		let FinishTime = performance.now() - time;
+		console.log(`Generating took ${Math.round(FinishTime)}ms (${Math.round(FinishTime / 1000)}s)`);
+		if (FinishTime < estimatedTime)
+			console.log(`Generation ran ${Math.round(100 / estimatedTime * FinishTime)}% faster as expected!🎉🎉`);
+		else console.log(`Generation ran ${100 - 100 / FinishTime * estimatedTime}% slower as expected.`);
+	}
 }
 
 function drawCube(x: number, y: number, wx: number, wy: number, h: number, color: Color, drawLines: boolean = true, shade: boolean = true) {

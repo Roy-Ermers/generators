@@ -6,7 +6,7 @@ export default class OceanBiome {
         this.Temperature = new Range(0.25, 1);
         this.Roughness = 0.2;
         this.Rarity = 0.4;
-        this.color = new Color(28, 107, 160, .5);
+        this.color = new Color(28, 107, 160, .7);
     }
     get Name() {
         return "Ocean";

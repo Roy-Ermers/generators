@@ -11,7 +11,7 @@ export default class OceanBiome implements Biome {
 		return "Ocean";
 	}
 
-	color = new Color(28, 107, 160, .5);
+	color = new Color(28, 107, 160, .7);
 
 
 }

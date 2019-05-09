@@ -17,7 +17,7 @@ import Color from "../Color.js";
 
 export const WorldSettings = {
 	SeaLevel: 106,
-	LandSize: 1,
+	LandSize: 2,
 	BuildHeight: 256,
 	MaxTerrainHeight: 128
 }
