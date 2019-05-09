@@ -15,7 +15,15 @@ import PixelData from "../PixelData.js";
 import { Noise } from "../Utils.js";
 import Color from "../Color.js";
 
+export const WorldSettings = {
+	SeaLevel: 106,
+	LandSize: 1,
+	BuildHeight: 256,
+	MaxTerrainHeight: 128
+}
+
 export default class WorldGenerator implements IGenerator {
+	Dimension = "3D" as "3D" | "2D";
 	// a large collection of all biomes.
 	static Biomes: Biome[] = [
 		new ForestBiome(),
@@ -45,7 +53,9 @@ export default class WorldGenerator implements IGenerator {
 		TemperatureMap: new Noise(),
 		TemperatureMap2: new Noise(),
 		TemperatureMap3: new Noise(),
-		HeightMap: new Noise(),
+		Height1Map: new Noise(),
+		Height2Map: new Noise(),
+		Height3Map: new Noise(),
 		OceanMap: new Noise(),
 		OceanMap2: new Noise(),
 		OceanMap3: new Noise(),
@@ -56,12 +66,10 @@ export default class WorldGenerator implements IGenerator {
 	}
 	Generate(x: number, y: number): PixelData {
 		let Maps = WorldGenerator.Maps;
-		let islandSize = 1;
-		let seaLevel = 106;
-		x = x / islandSize;
-		y = y / islandSize;
+		x = x / WorldSettings.LandSize;
+		y = y / WorldSettings.LandSize;
 		let biome: Biome;
-
+		let IsOcean = false;
 		let moisture = .6 * Maps.MoistureMap.get(x / 17.5, y / 17.5)
 			+ .3 * Maps.MoistureMap2.get(x / 15, y / 15)
 			+ .1 * Maps.MoistureMap3.get(x / 10, y / 10);
@@ -69,27 +77,38 @@ export default class WorldGenerator implements IGenerator {
 		let temperature = (Maps.TemperatureMap.get(x / 20, y / 20) * .7
 			+ Maps.TemperatureMap2.get(x / 4, y / 4) * .3);
 
-		let value = Maps.HeightMap.get(x / 500, y / 500);
+		let value = Maps.Height1Map.get(x / 500, y / 500);
 
-		let height = Maps.HeightMap.get(x * 50, y * 50);
+		let height = .6 * Maps.Height1Map.get(x / 17.5, y / 17.5)
+			+ .3 * Maps.Height2Map.get(x / 15, y / 15)
+			+ .1 * Maps.Height3Map.get(x / 10, y / 10) * (WorldSettings.MaxTerrainHeight);
 
-		let Ocean = Maps.OceanMap.get(x / seaLevel, y / seaLevel) * .6
-			+ Maps.OceanMap2.get(x / seaLevel * 10, y / seaLevel * 10) * .3
-			+ Maps.OceanMap3.get(x / seaLevel * 15, y / seaLevel * 15) * .1;
+		let Ocean = Maps.OceanMap.get(x / WorldSettings.SeaLevel, y / WorldSettings.SeaLevel) * .6
+			+ Maps.OceanMap2.get(x / WorldSettings.SeaLevel * 10, y / WorldSettings.SeaLevel * 10) * .3
+			+ Maps.OceanMap3.get(x / WorldSettings.SeaLevel * 15, y / WorldSettings.SeaLevel * 15) * .1;
 
-		if (Ocean < seaLevel / 256) {
+		if (Ocean < WorldSettings.SeaLevel / 256) {
 			biome = WorldGenerator.SeaBiomes[Math.floor(WorldGenerator.SeaBiomes.length * 1 - LinearToExpontial(temperature * 0.8 + Maps.TemperatureMap3.get(x * .1, y * .1) * .2))];
 			moisture = 1;
+			IsOcean = true;
 			if (biome.Roughness > 0)
-				height *= (Maps.HeightMap.get(x * biome.Roughness, y * biome.Roughness)) * seaLevel;
-			else height = seaLevel;
+				height = height * .6 + .4 * (Maps.Height1Map.get(x * biome.Roughness, y * biome.Roughness)) * WorldSettings.SeaLevel;
+			else height = WorldSettings.SeaLevel;
 		} else {
 			biome = this.FindBiome(moisture, temperature, value);
-			height *= Maps.HeightMap.get(x * biome.Roughness, y * biome.Roughness) * 204.8;
+
+			if (WorldGenerator.SeaBiomes.findIndex((obj) => obj == biome) >=0)
+				moisture = 1;
+
+			height = (height * .6 +
+				.4 * Maps.Height1Map.get(x * biome.Roughness, y * biome.Roughness))
+				* Maps.OceanMap.get(x / WorldSettings.SeaLevel, y / WorldSettings.SeaLevel);
 
 		}
-		return new PixelData(biome, height, moisture, temperature
+		return new PixelData(biome, Math.round(height), moisture, temperature,
 			// , new Color(255 * moisture,0,0)
+			undefined,
+			IsOcean
 		);
 	}
 	Refresh(): void {
@@ -104,7 +123,10 @@ export default class WorldGenerator implements IGenerator {
 	FindBiome(moisture: number, temperature: number, value: number): Biome {
 		let candidates: Biome[] = this.PickCandidates(moisture, temperature);
 		let biome = candidates[(candidates.length - 1) * value | 0];
-		return biome || WorldGenerator.SeaBiomes[Math.floor(WorldGenerator.SeaBiomes.length * temperature)];
+		if (!biome) {
+			biome = WorldGenerator.SeaBiomes[Math.floor(WorldGenerator.SeaBiomes.length * temperature)];
+		}
+		return biome;
 	}
 	private PickCandidates(moisture: number, temperature: number) {
 		let candidates: Biome[] = [];

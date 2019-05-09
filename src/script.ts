@@ -1,6 +1,7 @@
 import IGenerator from "./Generator.js";
 import PixelData from "./PixelData.js";
-import WorldGenerator from "./generators/WorldGenerator.js";
+import WorldGenerator, { WorldSettings } from "./generators/WorldGenerator.js";
+import Color from "./Color.js";
 let dropdown: HTMLSelectElement = document.querySelector("select") as HTMLSelectElement;
 let canvas = document.querySelector("canvas") as HTMLCanvasElement;
 let button = document.querySelector("button") as HTMLButtonElement;
@@ -9,8 +10,7 @@ let ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
 const Generators: IGenerator[] = [new WorldGenerator()];
 const PreformanceTesting = true;
-const PixelSize = 4;
-
+const PixelSize = 8;
 
 Generators.forEach(generator => {
 	let elem = document.createElement("option");
@@ -57,21 +57,82 @@ function Generate(generator: IGenerator | false, canvas: HTMLCanvasElement) {
 		(<IGenerator>generator).Generate(0, 0);
 
 		let endtime = performance.now();
-		if (endtime - timing < 25)
-			console.log("One pixel speed test: " + (endtime - timing) + ". amount of pixels in 1 second: " + 1000 / (endtime - timing));
+		if (endtime - timing < 25) {
+			console.group("Preformance");
+			console.log("One pixel speed test: " + (endtime - timing) + "ms");
+			console.log("mount of pixels in 1 second: " + 1000 / (endtime - timing) + "ms");
+			console.log("Estimated renderingtime: " + (canvas.width / PixelSize) ** 2 + "ms (" + Math.ceil((canvas.width / PixelSize) ** 2 / 1000) + "s)");
+			console.groupEnd();
+		}
 		else
 			console.warn("One pixel speed test took too long (" + (endtime - timing) + "ms). Please optimize your code.");
 	}
 	console.log("Starting generation using " + generator.name);
 	console.time("generation time");
-	for (let x = 0; x < canvas.width / PixelSize; x++) {
-		for (let y = 0; y < canvas.width / PixelSize; y++) {
-			let biome = (<IGenerator>generator).Generate(x / PixelSize, y / PixelSize) as PixelData;
-			if (biome.height !== 0) {
-				ctx.fillStyle = biome.color.darken(1 - (biome.height / 512)).toString();
-			} else { ctx.fillStyle = biome.color.toString(); }
-			ctx.fillRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
+	if (generator.Dimension == "2D")
+		for (let x = 0; x < canvas.width / PixelSize; x++) {
+			for (let y = 0; y < canvas.width / PixelSize; y++) {
+				let biome = (<IGenerator>generator).Generate(x, y) as PixelData;
+				if (biome.height !== 0) {
+					ctx.fillStyle = biome.color.darken(1 - (biome.height / 512)).toString();
+				} else { ctx.fillStyle = biome.color.toString(); }
+				ctx.fillRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
+			}
 		}
-	}
+	else
+		for (let z = 0; z < canvas.width / PixelSize; z++) {
+			for (let x = 0; x < canvas.width / PixelSize; x++) {
+				let biome = (<IGenerator>generator).Generate(x, z) as PixelData;
+				let X = z % 2 == 0 ? x * (PixelSize * 2) : x * (PixelSize * 2) + PixelSize;
+				let Y = z % 2 == 0 ? z * PixelSize : z * PixelSize;// % 2 == 0 ? z * (PixelSize * 1.5) : z * PixelSize;
+				if (biome.moisture < 1)
+					drawCube(X, Y, PixelSize, PixelSize, biome.height*PixelSize || PixelSize, biome.color,false);
+				else
+					drawCube(X, Y, PixelSize, PixelSize, PixelSize, biome.color, false, false);
+
+			}
+		}
 	console.timeEnd("generation time");
+}
+
+function drawCube(x: number, y: number, wx: number, wy: number, h: number, color: Color, drawLines: boolean = true, shade: boolean = true) {
+	ctx.beginPath();
+	ctx.fillStyle = ctx.strokeStyle = color.toString();
+	ctx.moveTo(x, y);
+	ctx.lineTo(x - wx, y - wx * 0.5);
+	ctx.lineTo(x - wx, y - h - wx * 0.5);
+	ctx.lineTo(x, y - h * 1);
+	ctx.closePath();
+	if (shade)
+		ctx.fillStyle = color.darken(0.8).toString();
+	if (drawLines)
+		ctx.strokeStyle = color.toString();
+	ctx.stroke();
+	ctx.fill();
+
+	ctx.beginPath();
+	ctx.moveTo(x, y);
+	ctx.lineTo(x + wy, y - wy * 0.5);
+	ctx.lineTo(x + wy, y - h - wy * 0.5);
+	ctx.lineTo(x, y - h * 1);
+	ctx.closePath();
+	if (shade)
+		ctx.fillStyle = color.darken(1.1).toString();
+	if (!(!shade || !drawLines))
+		ctx.strokeStyle = color.darken(1.5).toString();
+	ctx.stroke();
+	ctx.fill();
+
+	ctx.beginPath();
+	ctx.moveTo(x, y - h);
+	ctx.lineTo(x - wx, y - h - wx * 0.5);
+	ctx.lineTo(x - wx + wy, y - h - (wx * 0.5 + wy * 0.5));
+	ctx.lineTo(x + wy, y - h - wy * 0.5);
+	ctx.closePath();
+	if (shade)
+		ctx.fillStyle = color.darken(1.2).toString();
+	if (!(!shade || !drawLines))
+		ctx.strokeStyle = color.darken(1.6).toString();
+	ctx.stroke();
+	ctx.fill();
 }

@@ -1,7 +1,13 @@
 export class Range {
+    /**
+     *
+     * @param min minimal value of the range
+     * @param max Maximal value of the range if not used the minimal value is used.
+     */
     constructor(min, max) {
         this.min = min;
-        this.max = max;
+        //if max is not defined this range is constant.
+        this.max = max || min;
     }
     Check(number) {
         return this.min <= number && this.max >= number;
