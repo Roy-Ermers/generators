@@ -15,13 +15,13 @@ export default class PixelData {
 	public moisture: number;
 	public temperature: number;
 	public Ocean: boolean = false;
-	constructor(biome: Biome, height: number, moisture: number, temperature: number, overlay?: Color, Ocean?:boolean) {
+	constructor(biome: Biome, height: number, moisture: number, temperature: number, overlay?: Color, Ocean?: boolean) {
 		this.biome = biome;
 		this.height = height;
 		this.overlayColor = overlay;
 		this.moisture = moisture;
 		this.temperature = temperature;
-		if(Ocean) {
+		if (Ocean) {
 			this.Ocean = Ocean;
 			height = WorldSettings.SeaLevel;
 		}

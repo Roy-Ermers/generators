@@ -5,7 +5,7 @@ let button = document.querySelector("button");
 let ctx = canvas.getContext("2d");
 const Generators = [new WorldGenerator()];
 const PreformanceTesting = true;
-const PixelSize = 4;
+const PixelSize = 6;
 Generators.forEach(generator => {
     let elem = document.createElement("option");
     elem.value = Generators.indexOf(generator).toString();
@@ -37,10 +37,9 @@ if (canvas && ctx && dropdown) {
     });
 }
 function Generate(generator, canvas) {
-    if (!generator) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!generator)
         return;
-    }
     generator.Refresh();
     console.log("%cStarting generation using " + generator.name, "font-size: 18px; background-color: blue; color: lightblue; font-weight: bold;");
     let time = 0;

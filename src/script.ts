@@ -10,7 +10,7 @@ let ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
 const Generators: IGenerator[] = [new WorldGenerator()];
 const PreformanceTesting = true;
-const PixelSize = 4;
+const PixelSize = 6;
 
 Generators.forEach(generator => {
 	let elem = document.createElement("option");
@@ -47,12 +47,11 @@ if (canvas && ctx && dropdown) {
 }
 
 function Generate(generator: IGenerator | false, canvas: HTMLCanvasElement) {
-	if (!generator) {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	if (!generator)
 		return;
-	}
 	generator.Refresh();
-	console.log("%cStarting generation using " + generator.name,"font-size: 18px; background-color: blue; color: lightblue; font-weight: bold;");
+	console.log("%cStarting generation using " + generator.name, "font-size: 18px; background-color: blue; color: lightblue; font-weight: bold;");
 	let time = 0;
 	let estimatedTime = 0;
 	if (PreformanceTesting) {
@@ -148,4 +147,5 @@ function drawCube(x: number, y: number, wx: number, wy: number, h: number, color
 		ctx.strokeStyle = color.darken(1.6).toString();
 	ctx.stroke();
 	ctx.fill();
+
 }

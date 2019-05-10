@@ -13,9 +13,9 @@ import PixelData from "../PixelData.js";
 import { Noise } from "../Utils.js";
 export const WorldSettings = {
     SeaLevel: 106,
-    LandSize: 2,
+    LandSize: 1,
     BuildHeight: 256,
-    MaxTerrainHeight: 128
+    MaxTerrainHeight: 64
 };
 export default class WorldGenerator {
     constructor() {
@@ -46,7 +46,7 @@ export default class WorldGenerator {
             moisture = 1;
             IsOcean = true;
             if (biome.Roughness > 0)
-                height = height * .6 + .4 * (Maps.Height1Map.get(x * biome.Roughness, y * biome.Roughness)) * WorldSettings.SeaLevel;
+                height = height * .8 + .2 * (Maps.Height1Map.get(x * biome.Roughness, y * biome.Roughness)) * WorldSettings.SeaLevel;
             else
                 height = WorldSettings.SeaLevel;
         }
@@ -54,9 +54,9 @@ export default class WorldGenerator {
             biome = this.FindBiome(moisture, temperature, value);
             if (WorldGenerator.SeaBiomes.findIndex((obj) => obj == biome) >= 0)
                 moisture = 1;
-            height = (height * .6 +
-                .4 * Maps.Height1Map.get(x * biome.Roughness, y * biome.Roughness))
-                * Maps.OceanMap.get(x / WorldSettings.SeaLevel, y / WorldSettings.SeaLevel);
+            height = (height * .9 +
+                .1 * Maps.Height1Map.get(x * biome.Roughness, y * biome.Roughness))
+                * LinearToExpontial(Ocean) * WorldSettings.MaxTerrainHeight;
         }
         return new PixelData(biome, Math.round(height), moisture, temperature, 
         // , new Color(255 * moisture,0,0)
