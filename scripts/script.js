@@ -6,7 +6,8 @@ let ctx = canvas.getContext("2d");
 const Generators = [new WorldGenerator()];
 const PreformanceTesting = true;
 let PixelSize = 6;
-const mapSize = 1;
+const mapSize = 16;
+window.angle = 45;
 Generators.forEach(generator => {
     let elem = document.createElement("option");
     elem.value = Generators.indexOf(generator).toString();
@@ -31,7 +32,10 @@ if (canvas && ctx && dropdown) {
     // 	}
     // });
     canvas.addEventListener("wheel", ev => {
-        PixelSize = Math.round(PixelSize + Math.sign(ev.deltaY));
+        if (ev.shiftKey)
+            angle = Math.round(angle - Math.sign(ev.deltaY));
+        else
+            PixelSize = Math.round(PixelSize - Math.sign(ev.deltaY));
     }, { passive: true });
     dropdown.addEventListener("change", () => {
         Generate(Generators[parseInt(dropdown.querySelector("option:checked").value)] || false, canvas);
@@ -112,27 +116,54 @@ function render(frame) {
     requestAnimationFrame(render);
 }
 function drawCube(x, z, h, color) {
-    x = canvas.width / 2 / PixelSize + x - mapSize / 2;
-    z = canvas.width / 2 / PixelSize + z - mapSize / 2;
-    x *= PixelSize;
-    z *= PixelSize;
-    ctx.strokeStyle = color.darken(0.9).toString();
-    ctx.fillStyle = color.toString();
+    let blf = Iso(x, 0, z);
+    let blb = Iso(x, 0, z + PixelSize);
+    let brf = Iso(x + PixelSize, 0, z);
+    let brb = Iso(x + PixelSize, 0, z + PixelSize);
+    let tlf = Iso(x, h, z);
+    let tlb = Iso(x, h, z + PixelSize);
+    let trf = Iso(x + PixelSize, h, z);
+    let trb = Iso(x + PixelSize, h, z + PixelSize);
+    ctx.strokeStyle = color.toString();
+    ctx.fillStyle = color.darken(0.9).toString();
     ctx.beginPath();
-    let bl = Iso(x, 0, z);
-    ctx.moveTo(bl.x, bl.y);
-    let tl = Iso(x, h * PixelSize, z);
-    ctx.lineTo(tl.x, tl.y);
-    let tr = Iso(x + PixelSize, h * PixelSize, z);
-    ctx.lineTo(tr.x, tr.y);
-    let br = Iso(x + PixelSize, 0, z);
-    ctx.lineTo(br.x, br.y);
+    ctx.moveTo(blb.x, blb.y);
+    ctx.lineTo(brb.x, brb.y);
+    ctx.lineTo(trb.x, trb.y);
+    ctx.lineTo(tlb.x, tlb.y);
+    ctx.lineTo(blb.x, blb.y);
+    ctx.stroke();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(blb.x, blb.y);
+    ctx.lineTo(blf.x, blf.y);
+    ctx.lineTo(tlf.x, tlf.y);
+    ctx.lineTo(tlb.x, tlb.y);
+    ctx.lineTo(blb.x, blb.y);
+    ctx.stroke();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(brb.x, brb.y);
+    ctx.lineTo(brf.x, brf.y);
+    ctx.lineTo(trf.x, trf.y);
+    ctx.lineTo(trb.x, trb.y);
+    ctx.lineTo(brb.x, brb.y);
+    ctx.stroke();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(blf.x, blf.y);
+    ctx.lineTo(brf.x, brf.y);
+    ctx.lineTo(trf.x, trf.y);
+    ctx.lineTo(tlf.x, tlf.y);
+    ctx.lineTo(blf.x, blf.y);
     ctx.stroke();
     ctx.fill();
 }
 function Iso(x, y, z) {
-    return {
-        x: x / z,
-        y: y / z
-    };
+    const delta = { x: Math.cos(angle * Math.PI / 180), y: Math.sin(-25 * Math.PI / 180), z: 0.5 };
+    let X = (x * delta.x) + (z * delta.z);
+    let Y = (x * delta.x) + (y * delta.y);
+    Y += canvas.height * 0.66;
+    X += canvas.width / 2;
+    return { x: X, y: Y };
 }
