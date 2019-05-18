@@ -12,7 +12,10 @@ const Generators: IGenerator[] = [new WorldGenerator()];
 const PreformanceTesting = true;
 let PixelSize = 6;
 const mapSize = 16;
-window.angle = 45;
+let angle = { x: -45, y: 0 };
+
+
+let MousePosition: { x: number, y: number } | undefined;
 Generators.forEach(generator => {
 	let elem = document.createElement("option");
 	elem.value = Generators.indexOf(generator).toString();
@@ -38,10 +41,18 @@ if (canvas && ctx && dropdown) {
 	// 		document.querySelector(".info").innerHTML = pixel.toString() + `<br>X: ${x / PixelSize}<br>Y: ${y / PixelSize}<br>Candidates: ${PickCandidates(pixel.moisture, pixel.temperature).map(x => `${x.Name} (${x.Rarity * 100}%)`).join(", ") || "(none)"}`;
 	// 	}
 	// });
+	canvas.addEventListener("mousedown", ev => {
+		MousePosition = { x: ev.clientX, y: ev.clientY };
+	});
+	canvas.addEventListener("mouseup", () => MousePosition = undefined);
+	canvas.addEventListener("mousemove", ev => {
+		if (MousePosition == undefined) return;
+
+		angle.x = (MousePosition.x - ev.clientX) * 0.25;
+		angle.y = (MousePosition.y - ev.clientY) * -0.25;
+	});
 	canvas.addEventListener("wheel", ev => {
-		if (ev.shiftKey)
-			angle = Math.round(angle - Math.sign(ev.deltaY));
-		else PixelSize = Math.round(PixelSize - Math.sign(ev.deltaY));
+		PixelSize = Math.round(PixelSize - Math.sign(ev.deltaY));
 	}, { passive: true });
 	dropdown.addEventListener("change", () => {
 		Generate(Generators[parseInt((dropdown.querySelector("option:checked") as HTMLOptionElement).value)] || false, canvas);
@@ -133,12 +144,12 @@ function drawCube(x: number, z: number, h: number, color: Color) {
 	let blb = Iso(x, 0, z + PixelSize);
 	let brf = Iso(x + PixelSize, 0, z);
 	let brb = Iso(x + PixelSize, 0, z + PixelSize);
-	
+
 	let tlf = Iso(x, h, z);
 	let tlb = Iso(x, h, z + PixelSize);
 	let trf = Iso(x + PixelSize, h, z);
 	let trb = Iso(x + PixelSize, h, z + PixelSize);
-	
+
 	ctx.strokeStyle = color.toString();
 	ctx.fillStyle = color.darken(0.9).toString();
 	ctx.beginPath();
@@ -149,7 +160,7 @@ function drawCube(x: number, z: number, h: number, color: Color) {
 	ctx.lineTo(blb.x, blb.y);
 	ctx.stroke();
 	ctx.fill();
-	
+
 	ctx.beginPath();
 	ctx.moveTo(blb.x, blb.y);
 	ctx.lineTo(blf.x, blf.y);
@@ -158,7 +169,7 @@ function drawCube(x: number, z: number, h: number, color: Color) {
 	ctx.lineTo(blb.x, blb.y);
 	ctx.stroke();
 	ctx.fill();
-	
+
 	ctx.beginPath();
 	ctx.moveTo(brb.x, brb.y);
 	ctx.lineTo(brf.x, brf.y);
@@ -167,7 +178,7 @@ function drawCube(x: number, z: number, h: number, color: Color) {
 	ctx.lineTo(brb.x, brb.y);
 	ctx.stroke();
 	ctx.fill();
-	
+
 	ctx.beginPath();
 	ctx.moveTo(blf.x, blf.y);
 	ctx.lineTo(brf.x, brf.y);
@@ -179,10 +190,27 @@ function drawCube(x: number, z: number, h: number, color: Color) {
 }
 
 function Iso(x: number, y: number, z: number) {
-	const delta = { x: Math.cos(angle * Math.PI / 180), y: Math.sin(-25 * Math.PI / 180), z: 0.5};
-	let X = (x * delta.x) + (z * delta.z);
-	let Y = (x * delta.x) + (y * delta.y);
-	Y += canvas.height*0.66;
-	X += canvas.width / 2;
-	return { x:X, y:Y };
+	let radx = angle.x * Math.PI / 180;
+	let cosa = Math.cos(radx);
+	let sina = Math.sin(radx);
+	y = y * cosa - z * sina;
+	z = y * sina + z * cosa;
+
+	let rady = angle.y * Math.PI / 180
+	z = z * Math.cos(rady) - x * Math.sin(radx);
+	x = z * Math.sin(radx) + x * Math.cos(radx);
+
+	let factor = 50 / (500 + z)
+	x = x * factor + canvas.width / 2;
+	y = y * factor + canvas.height / 2;
+
+	x = Clamp(x, 0, canvas.width);
+	y = Clamp(y, 0, canvas.height);
+
+	return { x, y };
+}
+
+
+function Clamp(v: number, min: number, max: number) {
+	return Math.max(Math.min(v, min), max);
 }

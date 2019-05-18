@@ -7,7 +7,8 @@ const Generators = [new WorldGenerator()];
 const PreformanceTesting = true;
 let PixelSize = 6;
 const mapSize = 16;
-window.angle = 45;
+let angle = { x: -45, y: 0 };
+let MousePosition;
 Generators.forEach(generator => {
     let elem = document.createElement("option");
     elem.value = Generators.indexOf(generator).toString();
@@ -31,11 +32,18 @@ if (canvas && ctx && dropdown) {
     // 		document.querySelector(".info").innerHTML = pixel.toString() + `<br>X: ${x / PixelSize}<br>Y: ${y / PixelSize}<br>Candidates: ${PickCandidates(pixel.moisture, pixel.temperature).map(x => `${x.Name} (${x.Rarity * 100}%)`).join(", ") || "(none)"}`;
     // 	}
     // });
+    canvas.addEventListener("mousedown", ev => {
+        MousePosition = { x: ev.clientX, y: ev.clientY };
+    });
+    canvas.addEventListener("mouseup", () => MousePosition = undefined);
+    canvas.addEventListener("mousemove", ev => {
+        if (MousePosition == undefined)
+            return;
+        angle.x = (MousePosition.x - ev.clientX) * 0.25;
+        angle.y = (MousePosition.y - ev.clientY) * -0.25;
+    });
     canvas.addEventListener("wheel", ev => {
-        if (ev.shiftKey)
-            angle = Math.round(angle - Math.sign(ev.deltaY));
-        else
-            PixelSize = Math.round(PixelSize - Math.sign(ev.deltaY));
+        PixelSize = Math.round(PixelSize - Math.sign(ev.deltaY));
     }, { passive: true });
     dropdown.addEventListener("change", () => {
         Generate(Generators[parseInt(dropdown.querySelector("option:checked").value)] || false, canvas);
@@ -160,10 +168,21 @@ function drawCube(x, z, h, color) {
     ctx.fill();
 }
 function Iso(x, y, z) {
-    const delta = { x: Math.cos(angle * Math.PI / 180), y: Math.sin(-25 * Math.PI / 180), z: 0.5 };
-    let X = (x * delta.x) + (z * delta.z);
-    let Y = (x * delta.x) + (y * delta.y);
-    Y += canvas.height * 0.66;
-    X += canvas.width / 2;
-    return { x: X, y: Y };
+    let radx = angle.x * Math.PI / 180;
+    let cosa = Math.cos(radx);
+    let sina = Math.sin(radx);
+    y = y * cosa - z * sina;
+    z = y * sina + z * cosa;
+    let rady = angle.y * Math.PI / 180;
+    z = z * Math.cos(rady) - x * Math.sin(radx);
+    x = z * Math.sin(radx) + x * Math.cos(radx);
+    let factor = 50 / (500 + z);
+    x = x * factor + canvas.width / 2;
+    y = y * factor + canvas.height / 2;
+    x = Clamp(x, 0, canvas.width);
+    y = Clamp(y, 0, canvas.height);
+    return { x, y };
+}
+function Clamp(v, min, max) {
+    return Math.max(Math.min(v, min), max);
 }
