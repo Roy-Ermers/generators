@@ -23,7 +23,7 @@ export const WorldSettings = {
 }
 
 export default class WorldGenerator implements IGenerator {
-	Dimension = "3D" as "3D" | "2D";
+	Dimension = "2D" as "3D" | "2D";
 	// a large collection of all biomes.
 	static Biomes: Biome[] = [
 		new ForestBiome(),

@@ -19,7 +19,7 @@ export const WorldSettings = {
 };
 export default class WorldGenerator {
     constructor() {
-        this.Dimension = "3D";
+        this.Dimension = "2D";
         // @ts-ignore
         window.PickCandidates = this.PickCandidates;
     }

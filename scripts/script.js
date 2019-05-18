@@ -6,7 +6,7 @@ let ctx = canvas.getContext("2d");
 const Generators = [new WorldGenerator()];
 const PreformanceTesting = true;
 let PixelSize = 6;
-const mapSize = 16;
+const mapSize = 256;
 let angle = { x: -45, y: 0 };
 let MousePosition;
 Generators.forEach(generator => {
@@ -101,13 +101,14 @@ function render(frame) {
         for (let i = 0; i < cubes.length; i++) {
             const cube = cubes[i];
             let biome = cube.biome;
-            // if (biome.height !== 0) {
-            // 	ctx.fillStyle = biome.color.darken(1 - (biome.height / 512)).toString();
-            // } else { 
-            ctx.fillStyle = biome.color.toString();
-            // }
-            const x = canvas.width / 2 / PixelSize + cube.x - mapSize / 2;
-            const y = canvas.width / 4 / PixelSize + cube.y - mapSize / 2;
+            if (biome.height !== 0) {
+                ctx.fillStyle = biome.color.darken(1 - (biome.height / 512)).toString();
+            }
+            else {
+                ctx.fillStyle = biome.color.toString();
+            }
+            const x = canvas.width / 2 / PixelSize + cube.x - mapSize / 2 - Math.round(angle.x);
+            const y = canvas.width / 4 / PixelSize + cube.y - mapSize / 2 + Math.round(angle.y);
             ctx.fillRect(x * PixelSize, y * PixelSize, PixelSize, PixelSize);
         }
     else
